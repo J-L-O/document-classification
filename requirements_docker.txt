@@ -1,7 +1,6 @@
 # Pytorch is provided by the image
 # Task requirements
 msgpack
-Pillow>=7.1.0
 celery
 pydevd-pycharm
 
