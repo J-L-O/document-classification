@@ -20,9 +20,7 @@ RUN mkdir -p ${BASE}
 WORKDIR ${BASE}
 
 COPY requirements_docker.txt requirements.txt
-COPY ./unsupervised_classification/requirements.txt requirements_scan.txt
 RUN pip install -r requirements.txt
-RUN pip install -r requirements_scan.txt
 
 ARG WAIT_DIR=/opt/wait-for
 RUN git clone https://github.com/eficode/wait-for.git ${WAIT_DIR}
