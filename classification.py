@@ -5,7 +5,7 @@ import torch
 import celery
 import sys
 
-sys.path.append("./unsupervised_classification")
+sys.path.append(str(Path(__file__).resolve().parent / "unsupervised_classification"))
 from utils.common_config import get_model, get_val_transformations
 from utils.config import create_config
 
