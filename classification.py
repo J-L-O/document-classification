@@ -63,8 +63,7 @@ class ClassificationTask(celery.Task):
 
     def predict(self, image):
         transformed_image = self.transforms(image)
-        if self.config["device_id"] >= 0:
-            transformed_image = transformed_image.cuda(self.device)
+        transformed_image = transformed_image.to(self.device)
 
         probs = self.document_classifier(transformed_image.unsqueeze(0))
         probs = probs[0].squeeze()
