@@ -16,12 +16,17 @@ class ClassificationTask(celery.Task):
     def __init__(self):
         sys.path.append(str(Path(__file__).resolve().parent))
         self.config = {
-            'model_config_path': os.environ.get('CLASSIFICATION_CONFIG_PATH', None),
-            'device_id': int(os.environ.get('CLASSIFICATION_DEVICE', -1))
+            "model_config_path": os.environ.get("CLASSIFICATION_CONFIG_PATH", None),
+            "device_id": int(os.environ.get("CLASSIFICATION_DEVICE", -1))
         }
         print(self.config)
-        assert self.config['model_config_path'] is not None, "You must supply a path to a model configuration in the " \
+        assert self.config["model_config_path"] is not None, "You must supply a path to a model configuration in the " \
                                                              "environment variable CLASSIFICATION_CONFIG_PATH "
+
+        if self.config["device_id"] >= 0:
+            self.device = torch.device("cuda""", self.config["device_id"])
+        else:
+            self.device = torch.device("cpu")
 
         self.idx_to_label_map = {
             0: "Auction catalogue",
@@ -50,11 +55,11 @@ class ClassificationTask(celery.Task):
         torch.backends.cudnn.benchmark = True
 
         model = get_model(p)
-        checkpoint = torch.load(model_checkpoint, map_location='cpu')
-        model.load_state_dict(checkpoint['model'])
+        checkpoint = torch.load(model_checkpoint, map_location="cpu")
+        model.load_state_dict(checkpoint["model"])
 
-        model = torch.nn.DataParallel(model)
-        model = model.cuda()
+        if self.config["device_id"] >= 0:
+            model = model.cuda(self.device)
         model.eval()
 
         self.transforms = transforms.Compose([transforms.Resize(240), get_val_transformations(p)])
@@ -62,6 +67,9 @@ class ClassificationTask(celery.Task):
 
     def predict(self, image):
         transformed_image = self.transforms(image)
+        if self.config["device_id"] >= 0:
+            transformed_image = transformed_image.cuda(self.device)
+
         probs = self.document_classifier(transformed_image.unsqueeze(0))
         probs = probs[0].squeeze()
 
