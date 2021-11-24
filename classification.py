@@ -39,6 +39,7 @@ class ClassificationTask(celery.Task):
         }
 
         self.document_classifier = None
+        self.idx_to_label_map = []
         self.transforms = None
 
     def initialize(self):
@@ -48,8 +49,13 @@ class ClassificationTask(celery.Task):
         config_path = Path(self.config['model_config_path'])
         config_env = config_path / "env.yml"
         config_exp = config_path / "config.yml"
+        classes_path = config_path / "classes.txt"
         tb_run = ""  # Not needed
         model_checkpoint = config_path / "model.pth.tar"
+
+        with open(classes_path) as file:
+            for line in file:
+                self.idx_to_label_map.append(line.rstrip())
 
         p = create_config(config_env, config_exp, tb_run, make_dirs=False)
         torch.backends.cudnn.benchmark = True
