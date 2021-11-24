@@ -28,16 +28,6 @@ class ClassificationTask(celery.Task):
         else:
             self.device = torch.device("cpu")
 
-        self.idx_to_label_map = {
-            0: "Auction catalogue",
-            1: "Book of Hours",
-            2: "Book",
-            3: "Legal",
-            4: "Newspaper",
-            5: "Other",
-            6: "Photography"
-        }
-
         self.document_classifier = None
         self.idx_to_label_map = []
         self.transforms = None
