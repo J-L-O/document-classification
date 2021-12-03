@@ -61,6 +61,7 @@ class ClassificationTask(celery.Task):
         self.transforms = transforms.Compose([transforms.Resize(240), get_val_transformations(p)])
         self.document_classifier = model
 
+    @torch.no_grad()
     def predict(self, image):
         transformed_image = self.transforms(image)
         transformed_image = transformed_image.to(self.device)
