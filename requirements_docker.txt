@@ -2,7 +2,6 @@
 # Task requirements
 msgpack
 celery
-pydevd-pycharm
 
 # SCAN requirements
 easydict==1.9
