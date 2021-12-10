@@ -48,7 +48,6 @@ class ClassificationTask(celery.Task):
                 self.idx_to_label_map.append(line.rstrip())
 
         p = create_config(config_env, config_exp, tb_run, make_dirs=False)
-        torch.backends.cudnn.benchmark = True
 
         model = get_model(p)
         checkpoint = torch.load(model_checkpoint, map_location="cpu")
