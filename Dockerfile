@@ -1,9 +1,11 @@
-FROM pytorch/pytorch:1.7.0-cuda11.0-cudnn8-devel
+FROM nvidia/cuda:11.0.3-cudnn8-runtime-ubuntu20.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
         build-essential \
         git \
+        python3-dev \
+        python3-pip \
         pkg-config \
         netcat \
         zsh
@@ -21,6 +23,7 @@ WORKDIR ${BASE}
 
 COPY requirements_docker.txt requirements.txt
 RUN pip install -r requirements.txt
+RUN pip3 install torch==1.7.1+cu110 torchvision==0.8.2+cu110 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
 
 ARG WAIT_DIR=/opt/wait-for
 RUN git clone https://github.com/eficode/wait-for.git ${WAIT_DIR}

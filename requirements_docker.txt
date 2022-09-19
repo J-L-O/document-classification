@@ -4,6 +4,7 @@ msgpack
 celery
 
 # SCAN requirements
+pyyaml
 easydict==1.9
 joblib==1.0.1
 numpy==1.20.2
